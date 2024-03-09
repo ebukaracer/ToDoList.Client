@@ -1,0 +1,22 @@
+@page "/Misc"
+@using Blazored.LocalStorage
+@using ToDoList.Client.Models
+@inject ISyncLocalStorageService LocalStorage
+
+<h4>@_message</h4>
+<h3>First Name: @_person?.FirstName</h3>
+<h3>Last Name: @_person?.LastName</h3>
+
+@code {
+
+    private string? _message;
+    private Person? _person;
+
+    protected override void OnInitialized()
+    {
+        var savedPersons = LocalStorage.GetItem<List<Person>>("persons");
+        _message = savedPersons.Count.ToString();
+        _person = savedPersons[0];
+    }
+
+}

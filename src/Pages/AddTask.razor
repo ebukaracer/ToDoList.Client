@@ -1,0 +1,62 @@
+@using ToDoList.Client.Services
+@using ToDoList.Client.Models
+
+<div class="modal fade" id="task-modal" tabindex="-1" aria-labelledby="Label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="Label">@_title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="task-form-display">Task</span>
+                    <input type="text" class="form-control" placeholder="Description of task"
+                           aria-label="task-name" aria-describedby="basic-addon1" @bind="_desc">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="submit-task" type="button" class="btn btn-primary" data-bs-dismiss="modal" @onclick="Save">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code
+{
+    private string _desc = string.Empty;
+    private string _title = string.Empty;
+
+    [Parameter]
+    public TaskItem? TaskItem { get; set; }
+
+    [Parameter]
+    public EventCallback<(bool, string)> OnSave { get; set; }
+
+
+    protected override void OnParametersSet()
+    {
+        if (string.IsNullOrEmpty(TaskItem?.Title))
+        {
+            _desc = string.Empty;
+            _title = "Add a task?";
+        }
+        else
+        {
+            _desc = TaskItem.Title;
+            _title = $"Edit {TaskItem.Title}";
+        }
+    }
+
+    private void Save()
+    {
+        OnSave.InvokeAsync((true, _desc));
+    }
+
+    private void Cancel()
+    {
+        OnSave.InvokeAsync((false, ""));
+    }
+
+}

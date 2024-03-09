@@ -1,0 +1,215 @@
+﻿@page "/"
+@using ToDoList.Client.Services
+@using ToDoList.Client.Models
+@using TaskStatus = ToDoList.Client.Models.TaskStatus
+@inject TaskService TaskService
+
+<div class="container">
+
+    @* Header *@
+    <header class="header shared">
+        <div class="header-content">
+            <h1>Task List</h1>
+            <p>
+                <mark>@_message</mark>
+            </p>
+        </div>
+    </header>
+
+    @* Page content *@
+    <div class="content-wrap">
+
+        @* Modal *@
+        <AddTask
+            TaskItem="_currentTask"
+            OnSave="OnAddTaskModal"/>
+
+        <!-- Button trigger modal -->
+        <div class="row mt-4">
+            <div style="text-align: center">
+                <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal"
+                        data-bs-target="#task-modal" data-source="New Task" @onclick="() => _currentTask = null">
+                    Add Task
+                </button>
+                <button type="button" class="btn btn-outline-info btn-sm" @onclick="() => TaskService.MarkAllDone()">
+                    Done All
+                </button>
+                <button type="button" class="btn btn-outline-danger btn-sm" @onclick="() => TaskService.ClearAllTasks()">
+                    Clear All
+                </button>
+            </div>
+        </div>
+
+        <!--Todo Table-->
+        <div class="row mt-4">
+            <div class="col-12" style="height: 400px">
+                <table class="table table-responsive">
+                    <thead>
+                    <tr>
+                        <th class="task-id" style="cursor:pointer" @onclick="SortById">
+                            <i class="@SortOrderIcon"></i>
+                        </th>
+                        <th class="task">Task Name</th>
+                        <th class="task">Last Modified</th>
+                        <th class="status">Status</th>
+                        <th class="update">Edit</th>
+                        <th class="update">Clear</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    @foreach (var task in SubTasks)
+                    {
+                        <tr>
+                            <td>@task.Id</td>
+                            <td style=@TaskStatusStyle(task)>@task.Title</td>
+                            <td>@task.DateTime.ToString("MM/dd/yyyy hh:mm tt")</td>
+
+                            <td>
+                                <button type="button"
+                                        class="btn btn-outline-warning btn-sm state"
+                                        @onclick="() => TaskService.ShuffleTaskStatus(task)">
+                                    @task.Status.ToString()
+                                </button>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-outline-info btn-sm"
+                                        data-bs-toggle="modal" data-bs-target="#task-modal"
+                                        data-content="task1" @onclick="() => _currentTask = task">
+                                    <i class="oi oi-pencil"></i>
+                                </button>
+                            </td>
+                            <td>
+
+
+                                <button class="btn btn-outline-danger btn-sm"
+                                        type="button" @onclick="Callback">
+                                    <i class="oi oi-x"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        continue;
+                        // Todo
+                        void Callback()
+                        {
+                            CurrentPage(1);
+                            TaskService.ClearTask(task);
+                        }
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        @* Todo *@
+        @if (TaskService.AllTasks.Count() > _perPageCount)
+        {
+            <div style="text-align: center">
+                <button class="btn btn-outline-primary btn-sm" @onclick="PrevPage">
+                    Prev
+                </button>
+                @for (var i = _currentPage - 2; i <= _currentPage + 2; i++)
+                {
+                    if (!TaskService.GetSubTask(i, _perPageCount).Any())
+                    {
+                        break;
+                    }
+
+                    var j = i;
+
+                    @if (i > 0)
+                    {
+                        if (i == _currentPage)
+                        {
+                            <span class="px-2" style="font-weight:bold;cursor:pointer" @onclick="() => CurrentPage(j)">@i</span>
+                        }
+                        else
+                        {
+                            <span class="px-2" style="cursor:pointer" @onclick="() => CurrentPage(j)">@i</span>
+                        }
+                    }
+                }
+                <button class="btn btn-outline-primary btn-sm" @onclick="NextPage">
+                    Next
+                </button>
+            </div>
+        }
+    </div>
+
+    @* Footer *@
+    <footer class="footer shared">
+        <small class="text-muted">Developed by Racer</small>
+    </footer>
+</div>
+
+
+@code
+{
+    private int _perPageCount = 7;
+    private int _currentPage = 1;
+    private bool _sortDescending;
+    private string _message = "Don't abandon em' here!";
+
+    private TaskItem? _currentTask;
+
+    private IEnumerable<TaskItem> SubTasks
+    {
+        get
+        {
+            return _sortDescending ?
+                TaskService.GetSubTask(_currentPage, _perPageCount).OrderByDescending(t => t.Id) :
+                TaskService.GetSubTask(_currentPage, _perPageCount).OrderBy(t => t.Id);
+        }
+    }
+
+
+    private void OnAddTaskModal((bool, string) obj)
+    {
+        if (!obj.Item1.Equals(true) || string.IsNullOrEmpty(obj.Item2)) return;
+
+        var task = new TaskItem { Title = obj.Item2 };
+
+        if (_currentTask != null)
+        {
+            _currentTask.Title = obj.Item2;
+            TaskService.UpdateTask(_currentTask);
+        }
+        else
+        {
+            TaskService.AddTask(task);
+        }
+    }
+
+    private static string TaskStatusStyle(TaskItem task)
+    {
+        return task.Status switch
+        {
+            TaskStatus.Todo => "font-style: normal",
+            TaskStatus.InProgress => "font-style: italic",
+            TaskStatus.Done => "text-decoration: line-through",
+            _ => string.Empty
+            };
+    }
+
+    private void CurrentPage(int pageNo)
+    {
+        _currentPage = pageNo;
+    }
+
+    private void NextPage()
+    {
+        if (TaskService.GetSubTask(_currentPage + 1, _perPageCount).Any())
+            _currentPage++;
+    }
+
+    private void PrevPage()
+    {
+        if (_currentPage > 1)
+            _currentPage--;
+    }
+
+    private string SortOrderIcon => _sortDescending ? "oi oi-sort-descending" : "oi oi-sort-ascending";
+    // private string SortOrderIcon => _sortDescending ? "bi--sort-numeric-up" : "bi--sort-numeric-down";
+
+    private void SortById() => _sortDescending = !_sortDescending;
+}
