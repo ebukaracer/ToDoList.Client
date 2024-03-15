@@ -49,7 +49,7 @@ hr {
 /* bootstrap modifications */
 .container {
     width: auto;
-    max-width: 1000px;
+    max-width: fit-content;
     min-height: 100vh;
 }
 

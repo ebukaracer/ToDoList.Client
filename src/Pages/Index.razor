@@ -42,62 +42,64 @@
 
         <!--Todo Table-->
         <div class="row mt-4">
-            <div class="col-12" style="height: 400px">
-                <table class="table table-responsive">
-                    <thead>
-                    <tr>
-                        <th class="task-id" style="cursor:pointer" @onclick="SortById">
-                            <i class="@SortOrderIcon"></i>
-                        </th>
-                        <th class="task">Task Name</th>
-                        <th class="task">Last Modified</th>
-                        <th class="status">Status</th>
-                        <th class="update">Edit</th>
-                        <th class="update">Clear</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    @foreach (var task in SubTasks)
-                    {
+            <div class="col-12" style="height: auto">
+                <div class="table-responsive">
+                    <table class="table" style="width: 900px">
+                        <thead>
                         <tr>
-                            <td>@task.Id</td>
-                            <td style=@TaskStatusStyle(task)>@task.Title</td>
-                            <td>@task.DateTime.ToString("MM/dd/yyyy hh:mm tt")</td>
-
-                            <td>
-                                <button type="button"
-                                        class="btn btn-outline-warning btn-sm state"
-                                        @onclick="() => TaskService.ShuffleTaskStatus(task)">
-                                    @task.Status.ToString()
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-outline-info btn-sm"
-                                        data-bs-toggle="modal" data-bs-target="#task-modal"
-                                        data-content="task1" @onclick="() => _currentTask = task">
-                                    <i class="oi oi-pencil"></i>
-                                </button>
-                            </td>
-                            <td>
-
-
-                                <button class="btn btn-outline-danger btn-sm"
-                                        type="button" @onclick="Callback">
-                                    <i class="oi oi-x"></i>
-                                </button>
-                            </td>
+                            <th class="task-id" style="cursor:pointer" @onclick="SortById">
+                                <i class="@SortOrderIcon"></i>
+                            </th>
+                            <th class="task">Task Name</th>
+                            <th class="task">Last Modified</th>
+                            <th class="status">Status</th>
+                            <th class="update">Edit</th>
+                            <th class="update">Clear</th>
                         </tr>
-                        continue;
-                        // Todo
-                        void Callback()
+                        </thead>
+
+                        <tbody>
+                        @foreach (var task in SubTasks)
                         {
-                            CurrentPage(1);
-                            TaskService.ClearTask(task);
+                            <tr>
+                                <td>@task.Id</td>
+                                <td style=@TaskStatusStyle(task)>@task.Title</td>
+                                <td>@task.DateTime.ToString("MM/dd/yyyy hh:mm tt")</td>
+
+                                <td>
+                                    <button type="button"
+                                            class="btn btn-outline-warning btn-sm state"
+                                            @onclick="() => TaskService.ShuffleTaskStatus(task)">
+                                        @task.Status.ToString()
+                                    </button>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-outline-info btn-sm"
+                                            data-bs-toggle="modal" data-bs-target="#task-modal"
+                                            data-content="task1" @onclick="() => _currentTask = task">
+                                        <i class="oi oi-pencil"></i>
+                                    </button>
+                                </td>
+                                <td>
+
+
+                                    <button class="btn btn-outline-danger btn-sm"
+                                            type="button" @onclick="Callback">
+                                        <i class="oi oi-x"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            continue;
+                            // Todo
+                            void Callback()
+                            {
+                                CurrentPage(1);
+                                TaskService.ClearTask(task);
+                            }
                         }
-                    }
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
