@@ -14,19 +14,9 @@
                 <mark>@_message</mark>
             </p>
         </div>
-    </header>
 
-    @* Page content *@
-    <div class="content-wrap">
-
-        @* Modal *@
-        <AddTask
-            TaskItem="_currentTask"
-            OnSave="OnAddTaskModal"/>
-
-        <!-- Button trigger modal -->
         <div class="row mt-4">
-            <div style="text-align: center">
+            <div>
                 <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal"
                         data-bs-target="#task-modal" data-source="New Task" @onclick="() => _currentTask = null">
                     Add Task
@@ -39,12 +29,18 @@
                 </button>
             </div>
         </div>
+    </header>
+    <div class="content-wrap">
 
-        <!--Todo Table-->
-        <div class="row mt-4">
-            <div class="col-12" style="height: auto">
+        @* Modal *@
+        <AddTask
+            TaskItem="_currentTask"
+            OnSave="OnAddTaskModal"/>
+
+        <div class="table-wrap">
+            <div class="col-12">
                 <div class="table-responsive">
-                    <table class="table" style="width: 900px">
+                    <table class="table" style="width: 900px;">
                         <thead>
                         <tr>
                             <th class="task-id" style="cursor:pointer" @onclick="SortById">
@@ -57,7 +53,6 @@
                             <th class="update">Clear</th>
                         </tr>
                         </thead>
-
                         <tbody>
                         @foreach (var task in SubTasks)
                         {
@@ -106,7 +101,7 @@
         @* Todo *@
         @if (TaskService.AllTasks.Count() > _perPageCount)
         {
-            <div style="text-align: center">
+            <div class="paging">
                 <button class="btn btn-outline-primary btn-sm" @onclick="PrevPage">
                     Prev
                 </button>
@@ -137,6 +132,8 @@
             </div>
         }
     </div>
+
+    @* Page content *@
 
     @* Footer *@
     <footer class="footer shared">
