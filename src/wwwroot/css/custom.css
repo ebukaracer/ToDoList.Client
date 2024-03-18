@@ -1,6 +1,6 @@
 .content-wrap {
-    padding-bottom: 4em; /* Footer height */
-    padding-top: 8rem; /* Header height */
+    padding-bottom: 5em; /* Footer height */
+    padding-top: 12rem; /* Header height */
 }
 
 .shared {
@@ -17,26 +17,20 @@
 
 .paging {
     text-align: center;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-.footer-contents {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center
 }
 
 .footer {
     height: 4em;
     position: absolute;
+    bottom: 0;
+    border-radius: 10px 10px 0 0;
 }
 
 .header {
     top: 0;
     height: 11rem;
     position: fixed;
+    border-radius: 0 0 10px 10px;
 }
 
 .header-content {
@@ -52,8 +46,8 @@ hr {
 }
 
 .table-wrap {
-    margin-top: 5rem;
-    height: 410px;
+    text-align: -webkit-center;
+    height: 450px;
 }
 
 .table td, .table tr {
@@ -66,8 +60,8 @@ hr {
 
 /* bootstrap modifications */
 .container {
-    width: auto;
-    max-width: fit-content;
+    max-width: 100%;
+    position: relative;
     min-height: 100vh;
 }
 

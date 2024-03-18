@@ -5,12 +5,36 @@
 @inject TaskService TaskService
 
 <div class="container">
-    <div class="content-wrap">
+    @* Modal *@
+    <AddTask
+        TaskItem="_currentTask"
+        OnSave="OnAddTaskModal"/>
 
-        @* Modal *@
-        <AddTask
-            TaskItem="_currentTask"
-            OnSave="OnAddTaskModal"/>
+    @* Header *@
+    <header class="header shared">
+        <div class="header-content">
+            <h1>Task List</h1>
+            <p>
+                <mark>@_message</mark>
+            </p>
+        </div>
+        <div class="row mt-4">
+            <div>
+                <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal"
+                        data-bs-target="#task-modal" data-source="New Task" @onclick="() => _currentTask = null">
+                    Add Task
+                </button>
+                <button type="button" class="btn btn-outline-warning btn-sm" @onclick="() => TaskService.MarkAllDone()">
+                    Done All
+                </button>
+                <button type="button" class="btn btn-outline-danger btn-sm" @onclick="() => TaskService.ClearAllTasks()">
+                    Clear All
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="content-wrap">
 
         @* Page content, table, etc *@
         <div class="table-wrap">
@@ -108,31 +132,6 @@
             </div>
         }
     </div>
-
-    @* Header *@
-    <header class="header shared">
-        <div class="header-content">
-            <h1>Task List</h1>
-            <p>
-                <mark>@_message</mark>
-            </p>
-        </div>
-
-        <div class="row mt-4">
-            <div>
-                <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal"
-                        data-bs-target="#task-modal" data-source="New Task" @onclick="() => _currentTask = null">
-                    Add Task
-                </button>
-                <button type="button" class="btn btn-outline-info btn-sm" @onclick="() => TaskService.MarkAllDone()">
-                    Done All
-                </button>
-                <button type="button" class="btn btn-outline-danger btn-sm" @onclick="() => TaskService.ClearAllTasks()">
-                    Clear All
-                </button>
-            </div>
-        </div>
-    </header>
 
     @* Footer *@
     <footer class="footer shared">
